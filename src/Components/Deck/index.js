@@ -232,7 +232,7 @@ export default class extends Component {
                 super.handleEvent(event);
 
                 if ((event.type === 'panend' || event.type === 'wheel' )) {
-                    that.search(() => that.props.updateMap({variables : {card_id : that.props.card.id, camera : this.controllerState._viewportProps}}));
+                    that.search(() => that.props.updateSlide({variables : {slide_id : that.props.card.slides[that.props.slideIndex].id, camera : this.controllerState._viewportProps}}));
                 }
             }
         }
@@ -291,7 +291,7 @@ export default class extends Component {
 
                 </div>
 
-                <CarouselExample refetch={this.props.refetch} card={this.props.card}/>
+
                 {/*<Landscape updateLandscape={this.props.updateLandscape} card={this.props.card}/>*/}
             </div>
         );

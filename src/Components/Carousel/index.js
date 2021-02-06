@@ -7,10 +7,11 @@ import CarouselActions from './CarouselActions';
 import Frame from './Slide/Frame'
 import './index.less';
 
-function Carousel({ card,refetch, className, style }) {
+function Carousel({ setViewState, setSlideIndex, card,refetch, className, style }) {
 
-    const { carouselFragment, slideToPrevItem, slideToNextItem } = useSpringCarousel({
+    const { carouselFragment, slideToPrevItem, slideToNextItem , useListenToCustomEvent } = useSpringCarousel({
         withLoop: false,
+
         items: card.slides.map((slide, index) => ({
             id: index,
             renderItem: <Frame card={card} slide={slide} refetch={refetch}></Frame>
@@ -20,7 +21,16 @@ function Carousel({ card,refetch, className, style }) {
     //if slides increased, move along
     useEffect(() => {
         slideToNextItem();
-    }, [card.slides]);
+    }, [card.slides.length]);
+
+    //console.log(useListenToCustomEvent);
+
+    useListenToCustomEvent( 'onSlideStartChange', name => {
+
+        //console.log(card.slides[name.nextItem].camera);
+        setSlideIndex(name.nextItem);
+        setViewState(card.slides[name.nextItem].camera);
+    });
 
     return (
         <div

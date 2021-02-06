@@ -13,6 +13,18 @@ mutation( $card_id : Int,  $camera : jsonb){
                     }
                 }
 `;
+const SAVE_SLIDE = gql`
+
+mutation( $slide_id : Int,  $camera : jsonb){
+                update_slides(where: {id: {_eq: $slide_id}}, _set: {camera: $camera}) {
+                    returning {
+                                camera
+                                id
+                              }
+                    }
+                }
+`;
+
 
 const SAVE_MAP = gql`
 
@@ -55,6 +67,14 @@ export default ({refetch, children}) => {
     return <div>
 
         <Mutation
+            onError={() => alert('Could not save slide')}
+            mutation={SAVE_SLIDE}
+        >
+
+            {(updateSlide, {loading, error}) => {
+
+
+        return <Mutation
             onError={() => alert('Could not save map')}
             mutation={SAVE_MAP}
         >
@@ -87,7 +107,7 @@ export default ({refetch, children}) => {
                                                             {(updateLandscape, {loading, error}) => {
 
                                                                 return <Fragment>
-                                                                    {children(updateCamera, updateMap, updateAnnotation, updateLandscape, loading, error)}
+                                                                    {children(updateSlide, updateCamera, updateMap, updateAnnotation, updateLandscape, loading, error)}
                                                                 </Fragment>
                                                             }}
                                                         </Mutation>
@@ -97,6 +117,9 @@ export default ({refetch, children}) => {
                         </Fragment>
                     }}
                 </Mutation>
+
+            }}
+        </Mutation>
 
             }}
         </Mutation>

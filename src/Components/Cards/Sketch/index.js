@@ -7,54 +7,26 @@ import CardSaver from "./../../Saver";
 
 import './index.less';
 import Deck from "../../Deck";
+import CarouselExample from "../../Carousel";
 
 gsap.registerPlugin(ScrollTrigger);
 
 function RenderingCard(props) {
 
-    const [inViewport, setInViewport]   = useState(false);
-    const [viewState, setViewState]     = useState(props.card.camera);
-
-    const ref = useRef();
-
-    useLayoutEffect(() => {
-        const scroller =  ScrollTrigger.create({
-            trigger: ref.current,
-            start: () => 'top bottom',
-            end: () => 'bottom top',
-            onEnter: () => {
-                setInViewport(true);
-            },
-            onEnterBack: () => {
-                setInViewport(true);
-            },
-            onLeave: () => {
-                setInViewport(false);
-            },
-            onLeaveBack: () => {
-                setInViewport(false);
-            },
-            scrub: 1
-        });
-
-        return () => {
-            scroller.kill();
-        }
-    });
+    const [slideIndex, setSlideIndex]   = useState(0);
+    const [viewState,  setViewState]    = useState(props.card.slides[0].camera);
 
     return (
-        <div className="sketch-card" ref={ref}>
+        <div className="sketch-card">
             <div>
-
-                {false && inViewport ? <portals.OutPortal viewState={viewState} setViewState={setViewState} node={props.portalNode2} updateLandscape={()=> {}} updateMap={()=>{}} updateAnnotation={()=>{}} trip={props.trip} card={props.card}  /> : null}
 
                 <CardSaver refetch={props.refetch}>
 
                     {
-                        (updateMap, updateTable, updateAnnotation, updateLandscape, loading, error) => {
+                        (updateSlide, updateMap, updateTable, updateAnnotation, updateLandscape, loading, error) => {
                             return <div>
-                                <Deck refetch={props.refetch} viewState={viewState} setViewState={setViewState} width={props.width} updateLandscape={updateLandscape} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card} />
-                                {false && inViewport ? <portals.OutPortal viewState={viewState} setViewState={setViewState} node={props.portalNode2} updateLandscape={updateLandscape} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card}  /> : null}
+                                <Deck slideIndex={slideIndex} refetch={props.refetch} viewState={viewState} setViewState={setViewState} width={props.width} updateSlide={updateSlide} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card} />
+                                <CarouselExample setSlideIndex={setSlideIndex} setViewState={setViewState} refetch={props.refetch} card={props.card}/>
                             </div>
                         }
                     }

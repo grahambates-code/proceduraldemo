@@ -10,9 +10,7 @@ export default ({trip}) => <div className={'Front'}>
                             <Frame width={450} height={600}>
                                 <h1>Lake District 2021</h1>
 
-                                <AddGPSSaver>
-                                    {(updateTripGeojson, {loading, error}) => <AddGPS trip={trip} updateTripGeojson={updateTripGeojson}/> }
-                                </AddGPSSaver>
+
 
                                 <img style={{width : '300px' , height : 'auto'}} src={'/textures/title.png'}/>
 

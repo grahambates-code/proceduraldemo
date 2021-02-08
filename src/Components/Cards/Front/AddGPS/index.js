@@ -2,7 +2,7 @@ import React, {useCallback} from 'react'
 import {useDropzone} from 'react-dropzone'
 import {gpx} from '@mapbox/togeojson'
 
-export default function MyDropzone({trip, updateTripGeojson}) {
+export default function MyDropzone({card, updateTripGeojson}) {
 
     const onDrop = useCallback(acceptedFiles => {
 
@@ -20,7 +20,7 @@ export default function MyDropzone({trip, updateTripGeojson}) {
             var parser = new DOMParser();
             var doc = parser.parseFromString(readXml, "application/xml");
 
-            updateTripGeojson({ variables : {id : trip.id, geojson : gpx(doc) }});
+            updateTripGeojson({ variables : {id : card.id, geojson : gpx(doc) }});
         }
 
         reader.readAsText(acceptedFiles[0]);

@@ -5,6 +5,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import CardSaver from "./../../Saver";
 
+import Label from './Label'
+
 import './index.less';
 import Deck from "../../Deck";
 import CarouselExample from "../../Carousel";
@@ -25,6 +27,7 @@ function RenderingCard(props) {
                     {
                         (updateSlide, updateMap, updateTable, updateAnnotation, updateLandscape, loading, error) => {
                             return <div>
+                                <Label/>
                                 <Deck slideIndex={slideIndex} refetch={props.refetch} viewState={viewState} setViewState={setViewState} width={props.width} updateSlide={updateSlide} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card} />
                                 <CarouselExample setSlideIndex={setSlideIndex} setViewState={setViewState} refetch={props.refetch} card={props.card}/>
                             </div>

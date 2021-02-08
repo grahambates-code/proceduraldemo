@@ -6,7 +6,7 @@ const SAVE_TRIP_GEOJSON = gql`
 
 mutation MyMutation($id : Int, $geojson : jsonb) {
 
-  update_trip(where: {id: {_eq: $id}}, _set: {geojson: $geojson}) {
+  update_cards(where: {id: {_eq: $id}}, _set: {geojson: $geojson}) {
     returning {
       id
     }
@@ -14,10 +14,10 @@ mutation MyMutation($id : Int, $geojson : jsonb) {
 }
 `;
 
-export default ({trip, children}) => <Mutation
+export default ({trip, children, refetch}) => <Mutation
     onError={() => alert('Could not save trip')}
     mutation={SAVE_TRIP_GEOJSON}
-    //onCompleted={() => refetch()}
+    onCompleted={() => refetch()}
 >
 
     {(updateLandscape, {loading, error}) => {

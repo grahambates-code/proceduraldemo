@@ -19,71 +19,10 @@ import Carousel from './Carousel'
 import { EditableGeoJsonLayer, TransformMode } from "nebula.gl";
 import CarouselExample from "../Carousel";
 
-const myFeatureCollection = {
+const emptyFeatureCollection = {
     "type": "FeatureCollection",
     "features": [
-        {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -2.9611587524414027,
-                            54.49696322916624
-                        ],
-                        [
-                            -2.8839111328124964,
-                            54.49756137484508
-                        ],
-                        [
-                            -2.885284423828125,
-                            54.53921064698726
-                        ],
-                        [
-                            -2.9611587524414027,
-                            54.538613110979476
-                        ],
-                        [
-                            -2.9611587524414027,
-                            54.49696322916624
-                        ]
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -2.9536056518554683,
-                            54.505535814150065
-                        ],
-                        [
-                            -2.893524169921874,
-                            54.505535814150065
-                        ],
-                        [
-                            -2.893524169921874,
-                            54.51729527195507
-                        ],
-                        [
-                            -2.9536056518554683,
-                            54.51729527195507
-                        ],
-                        [
-                            -2.9536056518554683,
-                            54.505535814150065
-                        ]
-                    ]
-                ]
-            }
-        }
+
     ]
 }
 
@@ -138,9 +77,7 @@ export default class extends Component {
 
             new GeoJsonLayer({
                 id: 'geojson-layer',
-                data : this.props.trip.geojson,
-                // /pickable: true,
-                //getElevation : 10,
+                data : this.props.card.geojson || emptyFeatureCollection,
                 lineWidthScale: 20,
                 lineWidthMinPixels: 4,
                 lineWidthMaxPixels: 4,

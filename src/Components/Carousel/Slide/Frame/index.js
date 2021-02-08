@@ -3,6 +3,9 @@ import './index.less'
 import {Mutation} from "react-apollo";
 import Create from './../../Create'
 import gql from "graphql-tag";
+import AddGPSSaver from "../../../Cards/Front/AddGPS/saver";
+import AddGPS from "../../../Cards/Front/AddGPS";
+import Frame from "../../../Cards/Front/Frame";
 
 const SAVE_SLIDE = gql`
 
@@ -15,7 +18,7 @@ mutation( $slide_id : Int,  $text : String){
                 }
 `;
 
-export default ({card, slide, refetch}) => {
+export default ({card, slide, refetch, setSlideIndex}) => {
 
     const [edit, setEdit] = useState(false);
 
@@ -43,7 +46,12 @@ export default ({card, slide, refetch}) => {
         <br/>
 
         <button onClick={() => setEdit(true)}>Edit</button>
-        <Create card={card} refetch={refetch}/>
+        <Create card={card} refetch={refetch} setSlideIndex={setSlideIndex}/>
+
+        <AddGPSSaver refetch={refetch} >
+            {(updateTripGeojson, {loading, error}) => <AddGPS card={card} updateTripGeojson={updateTripGeojson}/> }
+        </AddGPSSaver>
+
     </div>
 
 }

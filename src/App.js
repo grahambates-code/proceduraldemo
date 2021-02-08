@@ -51,6 +51,7 @@ const GETCARD = gql`
                       content
                       annotations
                       landscapecamera
+                      geojson
                       
                      slides(order_by: {id: asc}) {
                         camera
@@ -124,9 +125,11 @@ const App = () => {
             const cards = data.owners[0].trips[0].cards;
             const stillLoading = loadedCount < cards.length;
 
-            //remove altitude
-            coordEach(trip.geojson, function(coords) {
-              if (coords.length > 2) coords.pop();
+            trip.cards.forEach(c => {
+              coordEach(c.geojson, function(coords) {
+                if (coords.length > 2) coords.pop();
+              });
+
             });
 
             return <Fragment>

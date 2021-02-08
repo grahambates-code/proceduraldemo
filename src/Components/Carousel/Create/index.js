@@ -13,7 +13,7 @@ const INSERT_SLIDE = gql`
     }
 `;
 
-export default function ({card, refetch, slideToNextItem}) {
+export default function ({card, refetch, setSlideIndex}) {
 
 
 
@@ -23,7 +23,7 @@ export default function ({card, refetch, slideToNextItem}) {
 
             <Mutation
                 onError={() => alert('Could not add slide')}
-                onCompleted={()=> {refetch()}}
+                onCompleted={()=> {refetch(); }}
                 mutation={INSERT_SLIDE}
             >
 

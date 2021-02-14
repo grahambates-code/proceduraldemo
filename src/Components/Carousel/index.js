@@ -16,16 +16,16 @@ function usePrevious(value) {
 }
 
 
-function Carousel({ setViewState, setSlideIndex, card,refetch, className, style }) {
+function Carousel({ viewState, setViewState, setSlideIndex, slideIndex, card,refetch, className, style }) {
 
     const prev = usePrevious({ slides : card.slides.length});
 
-    const { carouselFragment, useListenToCustomEvent, slideToNextItem } = useSpringCarousel({
+    const { carouselFragment, getCurrentActiveItem, useListenToCustomEvent, slideToNextItem } = useSpringCarousel({
         withLoop: false,
 
         items: card.slides.map((slide, index) => ({
             id: index,
-            renderItem: <Frame card={card} slide={slide} refetch={refetch}></Frame>
+            renderItem: <Frame viewState={viewState} card={card} slide={slide} refetch={refetch} slideIndex={slideIndex} setSlideIndex={setSlideIndex}></Frame>
         }))
     });
 

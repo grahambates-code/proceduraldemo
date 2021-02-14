@@ -18,7 +18,7 @@ import * as portals from 'react-reverse-portal';
 
 import {coordEach} from '@turf/meta';
 
-//import Landscape  from "./Components/Landscape";
+import AddPhoto  from "./Components/Photos/Add";
 import Deck       from "./Components/Deck";
 
 import Front        from "./Components/Cards/Front";
@@ -32,6 +32,11 @@ import SimpleRichTextEditor from "./Components/Cards/Title/Editor";
 
 const GETCARD = gql`
                {
+               
+                media {
+                  id
+                }
+  
                 owners(where: {id: {_eq: "cyclefriendly"}}) {
                   id
                   
@@ -57,6 +62,11 @@ const GETCARD = gql`
                         camera
                         id
                         text
+                        media {
+                          id
+                          json
+                        }
+                        
                       }
                       
                       assets(where: {type: {_eq: "PHOTO"}}) {
@@ -138,59 +148,65 @@ const App = () => {
 
                 {({ measureRef, contentRect: { bounds: { width }} }) => (
 
-                  <main className="App-main">
+                    <div>
 
-                  <portals.InPortal node={portalNode2}>
+                      <h1>{trip.name}</h1>
+                      <h2> <AddPhoto refetch={refetch}/> </h2>
 
-                    <div> this is one time component</div>
-                      {/*updateCard will be overwritten when called in Sketch*/}
-                      {/*<Deck trip={trip} width={width} updateCard={() => alert("not implemented")}/>*/}
-                  </portals.InPortal>
+                      <main className="App-main">
 
-                    {cards.map((card, i) => {
+                      <portals.InPortal node={portalNode2}>
 
-                      if (card.type === 'Front') {
-                        return <div className="App-section" key={i} >
-                                {admin && <code>{card.id}</code>}
-                                 <Front key={i + '' + card.id} trip={trip} card={card} index={i}/>
-                               </div>
-                      }
+                        <div> this is one time component</div>
+                          {/*updateCard will be overwritten when called in Sketch*/}
+                          {/*<Deck trip={trip} width={width} updateCard={() => alert("not implemented")}/>*/}
+                      </portals.InPortal>
 
-                      if (card.type === 'Title') {
-                        return <div className="App-section" key={i} >
-                          {admin && <code>{card.id}</code>}
-                          <Title key={i + '' + card.id} card={card} i={i}/>
+                        {cards.map((card, i) => {
+
+                          if (card.type === 'Front') {
+                            return <div className="App-section" key={i} >
+                                    {admin && <code>{card.id}</code>}
+                                     <Front key={i + '' + card.id} trip={trip} card={card} index={i}/>
+                                   </div>
+                          }
+
+                          if (card.type === 'Title') {
+                            return <div className="App-section" key={i} >
+                              {admin && <code>{card.id}</code>}
+                              <Title key={i + '' + card.id} card={card} i={i}/>
+                            </div>
+                          }
+
+                          if (true && card.type === 'Sketch') {
+
+                            return  <div className="App-section" key={i} >
+                              { admin && <code>{JSON.stringify(card.id)}</code>}
+                              <Sketch trip={trip} portalNode2={portalNode2} width={width < 500 ? width : 500} admin={admin} stillLoading={stillLoading} incrementLoadedCount={() => setLoadedCount(loadedCount + 1)} key={i + '' + card.id} index={i} card={card} refetch={refetch}/>
+                            </div>
+                          }
+
+                          if (card.type === 'Polaroid') {
+
+                            return  <div className="App-section" key={i} >
+                              {admin && <code>{card.id}</code>}
+                              <Polaroids width={width < 500 ? width : 500} admin={admin} stillLoading={stillLoading} incrementLoadedCount={() => setLoadedCount(loadedCount + 1)} key={i + '' + card.id} index={i} card={card} refetch={refetch}/>
+                            </div>
+                          }
+
+                          return null;
+                        })}
+
+                        <div className="App-section" style={{height : '100%'}}>
+                          <CardAdder trip={trip} refetch={refetch}/>
                         </div>
-                      }
 
-                      if (true && card.type === 'Sketch') {
+                        <div ref={measureRef}>My width is {width}</div>
 
-                        return  <div className="App-section" key={i} >
-                          { admin && <code>{JSON.stringify(card.id)}</code>}
-                          <Sketch trip={trip} portalNode2={portalNode2} width={width < 500 ? width : 500} admin={admin} stillLoading={stillLoading} incrementLoadedCount={() => setLoadedCount(loadedCount + 1)} key={i + '' + card.id} index={i} card={card} refetch={refetch}/>
-                        </div>
-                      }
 
-                      if (card.type === 'Polaroid') {
 
-                        return  <div className="App-section" key={i} >
-                          {admin && <code>{card.id}</code>}
-                          <Polaroids width={width < 500 ? width : 500} admin={admin} stillLoading={stillLoading} incrementLoadedCount={() => setLoadedCount(loadedCount + 1)} key={i + '' + card.id} index={i} card={card} refetch={refetch}/>
-                        </div>
-                      }
-
-                      return null;
-                    })}
-
-                    <div className="App-section" style={{height : '100%'}}>
-                      <CardAdder trip={trip} refetch={refetch}/>
+                      </main>
                     </div>
-
-                    <div ref={measureRef}>My width is {width}</div>
-
-
-
-                  </main>
 
                   )}
               </Measure>

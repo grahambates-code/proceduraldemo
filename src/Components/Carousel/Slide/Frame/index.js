@@ -5,7 +5,7 @@ import Create from './../../Create'
 import gql from "graphql-tag";
 import AddGPSSaver from "../../../Cards/Front/AddGPS/saver";
 import AddGPS from "../../../Cards/Front/AddGPS";
-import Frame from "../../../Cards/Front/Frame";
+import AddPhoto from '../SlideMedia'
 
 const SAVE_SLIDE = gql`
 
@@ -18,7 +18,7 @@ mutation( $slide_id : Int,  $text : String){
                 }
 `;
 
-export default ({card, slide, refetch, setSlideIndex}) => {
+export default ({card, slide, refetch, slideIndex, setSlideIndex, viewState}) => {
 
     const [edit, setEdit] = useState(false);
 
@@ -26,7 +26,9 @@ export default ({card, slide, refetch, setSlideIndex}) => {
 
         {!edit && slide.text}
 
-        {edit && <Mutation onError={() => alert('Could not save title')} mutation={SAVE_SLIDE} >
+        {edit && <Mutation onError={() => alert('Could not save title')}
+                           onCompleted={() => {refetch();setSlideIndex(slideIndex + 1)}}
+                           mutation={SAVE_SLIDE} >
 
             {(updateSlide, {loading, error}) => {
 
@@ -35,7 +37,9 @@ export default ({card, slide, refetch, setSlideIndex}) => {
                         text: e.currentTarget.textContent,
                         slide_id: slide.id
                     }
-                })}
+                })
+
+                }
                            contentEditable suppressContentEditableWarning={true}>{slide.text}</div>
 
             } }
@@ -46,11 +50,14 @@ export default ({card, slide, refetch, setSlideIndex}) => {
         <br/>
 
         <button onClick={() => setEdit(true)}>Edit</button>
-        <Create card={card} refetch={refetch} setSlideIndex={setSlideIndex}/>
+
+        {slideIndex + 1  === card.slides.length && <Create card={card} refetch={refetch} slideIndex={slideIndex} setSlideIndex={setSlideIndex}/> }
 
         <AddGPSSaver refetch={refetch} >
             {(updateTripGeojson, {loading, error}) => <AddGPS card={card} updateTripGeojson={updateTripGeojson}/> }
         </AddGPSSaver>
+
+        <AddPhoto slide={slide} refetch={refetch} viewState={viewState}/>
 
     </div>
 

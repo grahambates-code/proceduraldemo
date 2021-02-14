@@ -16,7 +16,8 @@ gsap.registerPlugin(ScrollTrigger);
 function RenderingCard(props) {
 
     const [slideIndex, setSlideIndex]   = useState(0);
-    const [viewState,  setViewState]    = useState(props.card.slides[0].camera);
+    const [viewState,  setViewState]    = useState(props.card.slides.length ? props.card.slides[0]?.camera : {longitude : 0, latitude : 50, zoom : 4 });
+
 
     return (
         <div className="sketch-card">
@@ -28,8 +29,9 @@ function RenderingCard(props) {
                         (updateSlide, updateMap, updateTable, updateAnnotation, updateLandscape, loading, error) => {
                             return <div>
                                 <Label/>
+
                                 <Deck slideIndex={slideIndex} refetch={props.refetch} viewState={viewState} setViewState={setViewState} width={props.width} updateSlide={updateSlide} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card} />
-                                <CarouselExample setSlideIndex={setSlideIndex} setViewState={setViewState} refetch={props.refetch} card={props.card}/>
+                                <CarouselExample slideIndex={slideIndex} setSlideIndex={setSlideIndex} viewState={viewState}  setViewState={setViewState} refetch={props.refetch} card={props.card}/>
                             </div>
                         }
                     }

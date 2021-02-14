@@ -45,6 +45,8 @@ export default class extends Component {
 
     render() {
 
+        const slide = this.props.card.slides[this.props.slideIndex];
+
         //if (!this.props.card || !this.props.card.annotations) return null;
 
         let layers = [
@@ -94,19 +96,21 @@ export default class extends Component {
 
             ];
 
-        if (this.props.card.annotations) {
+        if (true || this.props.card.annotations) {
 
-            let x = this.props.card.annotations.features[0].geometry.coordinates[0];
-            let y = this.props.card.annotations.features[1].geometry.coordinates[0];
+           // let x = this.props.card.annotations.features[0].geometry.coordinates[0];
+           // let y = this.props.card.annotations.features[1].geometry.coordinates[0];
 
-            layers= layers.concat([
+            //let xx =
+            //;
+            layers= layers.concat(slide.media.map(m =>
 
                 new EditableGeoJsonLayer({
-                    id: 'mask-geojson-layer-linestring',
-                    data: this.props.card.annotations,
+                    id: 'mask-geojson-layer-linestring' + m.id,
+                    data: m.json,
                     opacity : 1,
                     mode: TransformMode,
-                    selectedFeatureIndexes: [0,1],
+                    selectedFeatureIndexes: [0],
 
                     _subLayerProps: {
                         geojson: {
@@ -120,37 +124,37 @@ export default class extends Component {
                         this.setState({data : updatedData});
                         //alert(this.props.updateAnnotation);
                         //console.log('onEdit');
-                        that.search2(() => this.props.updateAnnotation({variables : {card_id : that.props.card.id, annotations : updatedData }}));
+                      //  that.search2(() => this.props.updateAnnotation({variables : {card_id : that.props.card.id, annotations : updatedData }}));
                     }
                 }),
 
-                new BitmapLayer({
-                    opacity : 1,
-                    id: 'mask-arrow-layer',
-                    bounds: [x[0], x[3], x[2], x[1]],
-                    image : '/textures/postit.png',
-                    pickable : true,
-                    parameters: {
-                        depthTest: false
-                    },
-                    onClick: ({bitmap, layer}) => {
-                        console.log('aasd');
-                        if (bitmap) {
-                            const pixelColor = readPixelsToArray(layer.props.image, {
-                                sourceX: bitmap.pixel[0],
-                                sourceY: bitmap.pixel[1],
-                                sourceWidth: 1,
-                                sourceHeight: 1
-                            })
-                            console.log('Color at picked pixel:', pixelColor)
-                        }
-                    },
-                }),
+                // new BitmapLayer({
+                //     opacity : 1,
+                //     id: 'mask-arrow-layer',
+                //     bounds: [x[0], x[3], x[2], x[1]],
+                //     image : '/textures/postit.png',
+                //     pickable : true,
+                //     parameters: {
+                //         depthTest: false
+                //     },
+                //     onClick: ({bitmap, layer}) => {
+                //         console.log('aasd');
+                //         if (bitmap) {
+                //             const pixelColor = readPixelsToArray(layer.props.image, {
+                //                 sourceX: bitmap.pixel[0],
+                //                 sourceY: bitmap.pixel[1],
+                //                 sourceWidth: 1,
+                //                 sourceHeight: 1
+                //             })
+                //             console.log('Color at picked pixel:', pixelColor)
+                //         }
+                //     },
+                // }),
 
-                new TapeLayer({
-                    bounds: [y[0], y[3], y[2], y[1]],
-                })
-            ]);
+                // new TapeLayer({
+                //     bounds: [y[0], y[3], y[2], y[1]],
+                // })
+            ));
 
         }
 

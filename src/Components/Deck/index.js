@@ -16,7 +16,7 @@ import './index.less';
 import CustomPathLayer  from './layers/CustomPathLayer'
 import TapeLayer        from './layers/TapeLayer'
 import Carousel from './Carousel'
-import { EditableGeoJsonLayer, TransformMode } from "nebula.gl";
+import { EditableGeoJsonLayer, TransformMode, RotateMode } from "nebula.gl";
 import CarouselExample from "../Carousel";
 
 const emptyFeatureCollection = {
@@ -47,6 +47,7 @@ export default class extends Component {
 
         const slide = this.props.card.slides[this.props.slideIndex];
 
+        //console.log(this.props.currentPhoto);
         //if (!this.props.card || !this.props.card.annotations) return null;
 
         let layers = [
@@ -77,22 +78,49 @@ export default class extends Component {
                // pickable: true,
             }),
 
+
             new GeoJsonLayer({
                 id: 'geojson-layer',
                 data : this.props.card.geojson || emptyFeatureCollection,
-                lineWidthScale: 20,
-                lineWidthMinPixels: 4,
-                lineWidthMaxPixels: 4,
+                lineWidthScale: 1,
+                lineWidthMinPixels: 12,
+                lineWidthMaxPixels: 14,
                 getLineColor: [255, 238,100, 255],
                 getRadius: 100,
-                getLineWidth: 2,
-                modelMatrix : new Matrix4().makeTranslation(0,0,10 ),
+                getLineWidth: 20,
+                //modelMatrix : new Matrix4().makeTranslation(0,0,10 ),
 
-                x_subLayerProps: {
+                _subLayerProps: {
                     "line-strings": {type: CustomPathLayer},
                 }
 
             }),
+
+            this.props.currentPhoto ? (new EditableGeoJsonLayer({
+                id: 'mask-geojson-layer-linestring' ,
+                data: this.props.currentPhoto,
+                opacity : 1,
+                mode: TransformMode,
+                selectedFeatureIndexes: [0],
+
+                _subLayerProps: {
+                    geojson: {
+                        getFillColor: (feature) => [255,0,255,255],
+                        getLineColor: (feature) => [255,255,255,0],
+                    }
+                },
+
+                onEdit: (event) => {
+                    const { editType, updatedData } = event;
+
+                    this.props.setCurrentPhoto(updatedData);
+                    //console.log(updatedData);
+                    //alert(this.props.updateAnnotation);
+                    //console.log('onEdit');
+                    that.search2(() => this.props.updateSlideMedia({variables : {slidemedia_id : that.props.card.slides[that.props.slideIndex].media[0].id, json : updatedData }}));
+                }
+            })) : null,
+
 
             ];
 
@@ -103,58 +131,64 @@ export default class extends Component {
 
             //let xx =
             //;
-            layers= layers.concat(slide.media.map(m =>
 
-                new EditableGeoJsonLayer({
-                    id: 'mask-geojson-layer-linestring' + m.id,
-                    data: m.json,
-                    opacity : 1,
-                    mode: TransformMode,
-                    selectedFeatureIndexes: [0],
+           // console.log({type : 'FeatureCollection', features : [this.props.currentPhoto]});
 
-                    _subLayerProps: {
-                        geojson: {
-                            getFillColor: (feature) => [255,255,255,0],
-                            getLineColor: (feature) => [255,255,255,0],
-                        }
-                    },
 
-                    onEdit: (event) => {
-                        const { editType, updatedData } = event;
-                        this.setState({data : updatedData});
-                        //alert(this.props.updateAnnotation);
-                        //console.log('onEdit');
-                      //  that.search2(() => this.props.updateAnnotation({variables : {card_id : that.props.card.id, annotations : updatedData }}));
-                    }
-                }),
-
-                // new BitmapLayer({
-                //     opacity : 1,
-                //     id: 'mask-arrow-layer',
-                //     bounds: [x[0], x[3], x[2], x[1]],
-                //     image : '/textures/postit.png',
-                //     pickable : true,
-                //     parameters: {
-                //         depthTest: false
-                //     },
-                //     onClick: ({bitmap, layer}) => {
-                //         console.log('aasd');
-                //         if (bitmap) {
-                //             const pixelColor = readPixelsToArray(layer.props.image, {
-                //                 sourceX: bitmap.pixel[0],
-                //                 sourceY: bitmap.pixel[1],
-                //                 sourceWidth: 1,
-                //                 sourceHeight: 1
-                //             })
-                //             console.log('Color at picked pixel:', pixelColor)
-                //         }
-                //     },
-                // }),
-
-                // new TapeLayer({
-                //     bounds: [y[0], y[3], y[2], y[1]],
-                // })
-            ));
+            // layers= layers.concat(slide.media.map(m =>
+            //
+            //     new EditableGeoJsonLayer({
+            //         id: 'mask-geojson-layer-linestring' + m.id,
+            //         xdata: {type : 'FeatureCollection', features : [this.props.currentPhoto]},
+            //         data: this.props.currentPhoto,
+            //         opacity : 1,
+            //         mode: TransformMode,
+            //         selectedFeatureIndexes: [0],
+            //
+            //         _subLayerProps: {
+            //             geojson: {
+            //                 getFillColor: (feature) => [255,255,255,0],
+            //                 getLineColor: (feature) => [255,255,255,0],
+            //             }
+            //         },
+            //
+            //         onEdit: (event) => {
+            //             const { editType, updatedData } = event;
+            //            // this.setState({data : updatedData});
+            //             this.props.setCurrentPhoto(updatedData);
+            //             //alert(this.props.updateAnnotation);
+            //             //console.log('onEdit');
+            //           //  that.search2(() => this.props.updateAnnotation({variables : {card_id : that.props.card.id, annotations : updatedData }}));
+            //         }
+            //     }),
+            //
+            //     // new BitmapLayer({
+            //     //     opacity : 1,
+            //     //     id: 'mask-arrow-layer',
+            //     //     bounds: [x[0], x[3], x[2], x[1]],
+            //     //     image : '/textures/postit.png',
+            //     //     pickable : true,
+            //     //     parameters: {
+            //     //         depthTest: false
+            //     //     },
+            //     //     onClick: ({bitmap, layer}) => {
+            //     //         console.log('aasd');
+            //     //         if (bitmap) {
+            //     //             const pixelColor = readPixelsToArray(layer.props.image, {
+            //     //                 sourceX: bitmap.pixel[0],
+            //     //                 sourceY: bitmap.pixel[1],
+            //     //                 sourceWidth: 1,
+            //     //                 sourceHeight: 1
+            //     //             })
+            //     //             console.log('Color at picked pixel:', pixelColor)
+            //     //         }
+            //     //     },
+            //     // }),
+            //
+            //     // new TapeLayer({
+            //     //     bounds: [y[0], y[3], y[2], y[1]],
+            //     // })
+            // ));
 
         }
 

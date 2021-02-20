@@ -22,7 +22,7 @@
     "cloudinary-react": "^1.6.8",
     "d3": "^5.15.0",
     "d3-ease": "^2.0.0",
-    "deck.gl": "^8.4.0",
+    "deck.gl": "^8.2.10",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
     "exifr": "^6.0.0",

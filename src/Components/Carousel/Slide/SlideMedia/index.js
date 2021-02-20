@@ -2,6 +2,7 @@ import React, {Fragment} from 'react';
 import {Mutation} from "react-apollo";
 import gql from "graphql-tag";
 import {WebMercatorViewport} from '@deck.gl/core';
+import * as turf from '@turf/turf'
 
 const ADD = gql`
 
@@ -22,10 +23,19 @@ export default ({viewState,  slide, refetch}) => {
     const test = (add) => {
 
         const viewport  = new WebMercatorViewport(viewState);
-        const center    = viewport.unproject([viewport.width/2,viewport.height/2])
+        //const center    = viewport.unproject([viewport.width/2,viewport.height/2])
+        const tl    = viewport.unproject([0,0])
+        const br    = viewport.unproject([viewport.width,viewport.width]) // make a square
 
-        add({variables  : {slide_id : slide.id, type : 'Photo', json : geoj}});
+        var pointA = turf.point(tl);
+        var pointB = turf.point(br);
+//create a bbox that extends to include all the features
+        var bbx = turf.bbox(turf.featureCollection([pointA, pointB]));
+        var pgn = turf.bboxPolygon(bbx);  //convert it to Polygon featu
 
+        //code for making a square around center
+        add({variables  : {slide_id : slide.id, type : 'Photo', json :
+                    { "type": "FeatureCollection", "features": [ pgn]}}});
     }
 
     return <div>
@@ -34,7 +44,6 @@ export default ({viewState,  slide, refetch}) => {
             onError={() => alert('Could not add slide photo')}
             onCompleted={() => refetch && refetch() }
             mutation={ADD}
-            //variables={{slide_id : slide.id, type : 'Photo', json : []}}
         >
 
             {(add, {loading, error}) => {

@@ -16,7 +16,7 @@ function usePrevious(value) {
 }
 
 
-function Carousel({ viewState, setViewState, setSlideIndex, slideIndex, card,refetch, className, style }) {
+function Carousel({ setCurrentPhoto, viewState, setViewState, setSlideIndex, slideIndex, card,refetch, className, style }) {
 
     const prev = usePrevious({ slides : card.slides.length});
 
@@ -38,6 +38,7 @@ function Carousel({ viewState, setViewState, setSlideIndex, slideIndex, card,ref
 
         //console.log(card.slides[name.nextItem].camera);
         setSlideIndex(name.nextItem);
+        setCurrentPhoto(card.slides[name.nextItem].media[0]?.json); //setting photo geojson state
 
         card.slides[name.nextItem].camera && setViewState({
             transitionDuration: 750,

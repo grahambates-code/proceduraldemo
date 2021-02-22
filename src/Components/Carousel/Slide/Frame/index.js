@@ -5,7 +5,8 @@ import Create from './../../Create'
 import gql from "graphql-tag";
 import AddGPSSaver from "../../../Cards/Front/AddGPS/saver";
 import AddGPS from "../../../Cards/Front/AddGPS";
-import AddPhoto from '../SlideMedia'
+import AddPhoto from '../SlideMedia/AddMedia'
+import ListMedia from '../SlideMedia/ListMedia'
 
 const SAVE_SLIDE = gql`
 
@@ -58,6 +59,8 @@ export default ({card, slide, refetch, slideIndex, setSlideIndex, viewState}) =>
         </AddGPSSaver>
 
         <AddPhoto slide={slide} refetch={refetch} viewState={viewState}/>
+
+        <ListMedia refetch={refetch} viewState={viewState} />
 
     </div>
 

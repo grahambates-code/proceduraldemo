@@ -5,19 +5,10 @@ import {MapController, LinearInterpolator, FlyToInterpolator} from '@deck.gl/cor
 import {BitmapLayer} from '@deck.gl/layers';
 import {TileLayer} from '@deck.gl/geo-layers';
 import {Component} from 'react';
-import * as turf from "@turf/turf";
-import {Matrix4} from 'math.gl';
-
-import {readPixelsToArray} from '@luma.gl/core';
-
-import Landscape from './../Landscape'
 import _ from "lodash";
 import './index.less';
 import CustomPathLayer  from './layers/CustomPathLayer'
-import TapeLayer        from './layers/TapeLayer'
-import Carousel from './Carousel'
 import { EditableGeoJsonLayer, TransformMode, RotateMode } from "nebula.gl";
-import CarouselExample from "../Carousel";
 
 const emptyFeatureCollection = {
     "type": "FeatureCollection",
@@ -46,9 +37,6 @@ export default class extends Component {
     render() {
 
         const slide = this.props.card.slides[this.props.slideIndex];
-
-        //console.log(this.props.currentPhoto);
-        //if (!this.props.card || !this.props.card.annotations) return null;
 
         let layers = [
 
@@ -81,7 +69,7 @@ export default class extends Component {
 
             new GeoJsonLayer({
                 id: 'geojson-layer',
-                data : this.props.card.geojson || emptyFeatureCollection,
+                data : this.props.card.data || emptyFeatureCollection,
                 lineWidthScale: 1,
                 lineWidthMinPixels: 12,
                 lineWidthMaxPixels: 14,

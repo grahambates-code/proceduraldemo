@@ -16,7 +16,7 @@ mutation( $card_id : Int,  $camera : jsonb){
 const SAVE_SLIDE = gql`
 
 mutation( $slide_id : Int,  $camera : jsonb){
-                update_slides(where: {id: {_eq: $slide_id}}, _set: {camera: $camera}) {
+                update_card_slide(where: {id: {_eq: $slide_id}}, _set: {camera: $camera}) {
                     returning {
                                 camera
                                 id

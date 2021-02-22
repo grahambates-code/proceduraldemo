@@ -17,6 +17,7 @@ const initialState = { pos: 0, sliding: false, dir: NEXT };
 const Carousel = (props) => {
     const [state, dispatch] = React.useReducer(reducer, initialState);
     const numItems = React.Children.count(props.children);
+
     const slide = (dir) => {
         dispatch({ type: dir, numItems });
         setTimeout(() => {

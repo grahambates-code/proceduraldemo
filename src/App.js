@@ -19,7 +19,7 @@ import * as portals from 'react-reverse-portal';
 import {coordEach} from '@turf/meta';
 
 import AddPhoto  from "./Components/Photos/Add";
-import Deck       from "./Components/Deck";
+import Deck       from "./Components/Cards/Sketch/Deck";
 
 import Front        from "./Components/Cards/Front";
 import Title        from "./Components/Cards/Title";
@@ -37,41 +37,24 @@ const GETCARD = gql`
                   id
                 }
   
-                owners(where: {id: {_eq: "cyclefriendly"}}) {
+                owners:owner(where: {id: {_eq: "cyclefriendly"}}) {
                   id
                   
                   trips(where: {url: {_eq: "lakes2021"}}) {
                     id
                     name
                     url
-                    geojson
+                    
                     cards(order_by: {id: asc}) {
                       id
-                      html
                       type
-                      map
-                      title
-                      text
-                      camera
-                      content
-                      annotations
-                      landscapecamera
-                      geojson
+                      data
                       
-                     slides(order_by: {id: asc}) {
-                        camera
-                        id
-                        text
-                        media {
+                      slides(order_by: {id: asc}) {
+                          camera
                           id
-                          json
-                        }
-                        
                       }
                       
-                      assets(where: {type: {_eq: "PHOTO"}}) {
-                        data
-                      }
                     }
                   }
                 }
@@ -108,7 +91,7 @@ const useContainerDimensions = myRef => {
 
 gsap.registerPlugin(ScrollTrigger);
 
-const httpLink = new HttpLink({ uri: 'https://beatroute2019.herokuapp.com/v1/graphql' });
+const httpLink = new HttpLink({ uri: 'https://guided-viper-73.hasura.app/v1/graphql' });
 
 const client = new ApolloClient({ link: (httpLink), cache: new InMemoryCache() });
 
@@ -136,7 +119,7 @@ const App = () => {
             const stillLoading = loadedCount < cards.length;
 
             trip.cards.forEach(c => {
-              coordEach(c.geojson, function(coords) {
+              coordEach(c.data, function(coords) {
                 if (coords.length > 2) coords.pop();
               });
 

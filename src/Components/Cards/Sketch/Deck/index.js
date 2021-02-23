@@ -99,13 +99,10 @@ export default class extends Component {
                 },
 
                 onEdit: (event) => {
-                    const { editType, updatedData } = event;
-
+                    const { updatedData } = event;
                     this.props.setCurrentPhoto(updatedData);
-                    //console.log(updatedData);
-                    //alert(this.props.updateAnnotation);
-                    //console.log('onEdit');
-                    that.search2(() => this.props.updateSlideMedia({variables : {slidemedia_id : that.props.card.slides[that.props.slideIndex].media[0].id, json : updatedData }}));
+                    const slide = that.props.card.slides[that.props.slideIndex];
+                    that.search2(() => this.props.updateSlide({variables : {slide_id : slide.id, camera : slide.camera, data : {...slide.data, geojson : updatedData} }}));
                 }
             })) : null,
 
@@ -195,7 +192,8 @@ export default class extends Component {
                 super.handleEvent(event);
 
                 if ((event.type === 'panend' || event.type === 'wheel' )) {
-                    that.search(() => that.props.updateSlide({variables : {slide_id : that.props.card.slides[that.props.slideIndex].id, camera : this.controllerState._viewportProps}}));
+                    const slide = that.props.card.slides[that.props.slideIndex];
+                    that.search(() => that.props.updateSlide({variables : {slide_id : slide.id, data : slide.data, camera : this.controllerState._viewportProps}}));
                 }
             }
         }

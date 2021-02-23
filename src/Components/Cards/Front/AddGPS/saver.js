@@ -6,7 +6,7 @@ const SAVE_TRIP_GEOJSON = gql`
 
 mutation MyMutation($id : Int, $geojson : jsonb) {
 
-  update_cards(where: {id: {_eq: $id}}, _set: {geojson: $geojson}) {
+  update_card(where: {id: {_eq: $id}}, _set: {data: $geojson}) {
     returning {
       id
     }

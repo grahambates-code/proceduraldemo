@@ -21,7 +21,7 @@ export default class extends Component {
         this.state = {
             slideIndex :0,
             viewState : props.card.slides.length ? props.card.slides[0]?.camera : {longitude : 0, latitude : 50, zoom : 4 },
-            currentPhoto : props.card.slides[0]?.data?.media
+            currentPhoto : props.card.slides[0]?.data?.geojson
         }
 
     }
@@ -45,9 +45,9 @@ export default class extends Component {
                                 (updateSlide, updateMap, updateTable, updateAnnotation, updateLandscape, updateSlideMedia, loading, error) => {
                                     return <div>
                                         <Label card={props.card}/>
-                                        {/*<code>{JSON.stringify(currentPhoto)}</code>*/}
+                                        {/*<code style={{'position' : 'fixed'}}>{JSON.stringify(props.card.slides[0].data)}</code>*/}
                                         <Deck setCurrentPhoto={setCurrentPhoto} currentPhoto={currentPhoto} slideIndex={slideIndex} refetch={props.refetch} viewState={viewState} setViewState={setViewState} width={props.width} updateSlide={updateSlide} updateSlideMedia={updateSlideMedia} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card} />
-                                        {/*<CarouselExample setCurrentPhoto={setCurrentPhoto} slideIndex={slideIndex} setSlideIndex={setSlideIndex} viewState={viewState}  setViewState={setViewState} refetch={props.refetch} card={props.card}/>*/}
+                                        <CarouselExample setCurrentPhoto={setCurrentPhoto} slideIndex={slideIndex} setSlideIndex={setSlideIndex} viewState={viewState}  setViewState={setViewState} refetch={props.refetch} card={props.card}/>
                                     </div>
                                 }
                             }

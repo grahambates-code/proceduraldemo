@@ -38,7 +38,7 @@ function Carousel({ setCurrentPhoto, viewState, setViewState, setSlideIndex, sli
 
         //console.log(card.slides[name.nextItem].camera);
         setSlideIndex(name.nextItem);
-        setCurrentPhoto(card.slides[name.nextItem].media[0]?.json); //setting photo geojson state
+        setCurrentPhoto(card.slides[name.nextItem].data.geojson); //setting photo geojson state
 
         card.slides[name.nextItem].camera && setViewState({
             transitionDuration: 750,

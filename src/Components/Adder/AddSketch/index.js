@@ -4,10 +4,10 @@ import gql from "graphql-tag";
 
 const ADD = gql`
 
-mutation ($content : jsonb, $camera : jsonb, $trip_id : Int) {
+mutation ($content : jsonb, $camera : jsonb, $trip_id : Int, $slide_data : jsonb) {
 
   insert_card(objects: [
-                {trip_id: $trip_id, type: "Sketch", data : $content, slides : {data : [{camera : $camera}]}},
+                {trip_id: $trip_id, type: "Sketch", data : $content, slides : {data : [{data : $slide_data, camera : $camera}]}},
               
                 ]) {
     returning {
@@ -32,7 +32,7 @@ export default ({trip, refetch}) => {
             onError={() => alert('Could not add sketch card')}
             onCompleted={() => refetch()}
             mutation={ADD}
-            variables={{ camera : camera, content : content, trip_id : trip.id }}
+            variables={{ camera : camera, content : content, slide_data : {text : 'Write here'}, trip_id : trip.id }}
         >
 
             {(add, {loading, error}) => {

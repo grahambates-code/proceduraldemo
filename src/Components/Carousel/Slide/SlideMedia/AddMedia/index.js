@@ -6,17 +6,14 @@ import * as turf from '@turf/turf'
 
 const ADD = gql`
 
-mutation ($slide_id : Int, $type : String, $json : jsonb) {
-  insert_slide_media(objects: {json: $json, slide_id: $slide_id, type: $type}) {
+mutation UpdateSlide($slide_id : Int, $data : jsonb) {
+  update_card_slide(where: {id: {_eq: $slide_id }}, _set: {data: $data}) {
     returning {
       id
     }
   }
 }
-
 `;
-
-const geoj= {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-3.0360031127929688,54.426320563641035],[-2.9781532287597656,54.426320563641035],[-2.9781532287597656,54.45167814495863],[-3.0360031127929688,54.45167814495863],[-3.0360031127929688,54.426320563641035]]]},"properties":{}}]};
 
 export default ({viewState,  slide, refetch}) => {
 
@@ -29,13 +26,12 @@ export default ({viewState,  slide, refetch}) => {
 
         var pointA = turf.point(tl);
         var pointB = turf.point(br);
-//create a bbox that extends to include all the features
+        //create a bbox that extends to include all the features
         var bbx = turf.bbox(turf.featureCollection([pointA, pointB]));
-        var pgn = turf.bboxPolygon(bbx);  //convert it to Polygon featu
+        var pgn = turf.bboxPolygon(bbx);  //convert it to Polygon feature
 
         //code for making a square around center
-        add({variables  : {slide_id : slide.id, type : 'Photo', json :
-                    { "type": "FeatureCollection", "features": [ pgn]}}});
+        add({variables  : {slide_id : slide.id, data : {...slide.data, geojson : {"type": "FeatureCollection", "features": [ pgn]}}}});
     }
 
     return <div>
@@ -49,7 +45,7 @@ export default ({viewState,  slide, refetch}) => {
             {(add, {loading, error}) => {
 
                 return <button onClick={ () => test(add) }>
-                  Add slide photo ({slide.media.length})
+                  Add slide photo
                 </button>
             }}
         </Mutation>

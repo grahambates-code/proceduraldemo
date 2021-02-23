@@ -52,6 +52,7 @@ const GETCARD = gql`
                       
                       slides(order_by: {id: asc}) {
                           camera
+                          data
                           id
                       }
                       

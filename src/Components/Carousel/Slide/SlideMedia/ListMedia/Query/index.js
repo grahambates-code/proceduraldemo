@@ -9,8 +9,8 @@ const GETMEDIA = gql`
                
                 media {
                   id
-                  data
-                  geo
+                  json
+                  location
                 }
   
               }
@@ -28,7 +28,7 @@ const App = () => {
 
                         return <Fragment>
                                     <ul>
-                                        {data.media.map(m => <li><img style={{width: '200px', height : 'auto'}} src={m.data.url}/></li>)}
+                                        {data.media.map(m => <li><img style={{width: '200px', height : 'auto'}} src={m.json.url}/></li>)}
                                     </ul>
                                 </Fragment>
 

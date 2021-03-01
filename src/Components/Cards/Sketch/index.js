@@ -29,6 +29,7 @@ export default class extends Component {
     render() {
 
         let {currentPhoto, slideIndex, viewState} = this.state;
+        let {client} = this.props;
 
         let setCurrentPhoto = (p) => this.setState({currentPhoto : p});
         let setSlideIndex   = (p) => this.setState({slideIndex   : p});
@@ -46,7 +47,7 @@ export default class extends Component {
                                     return <div>
                                         <Label card={props.card}/>
                                         {/*<code style={{'position' : 'fixed'}}>{JSON.stringify(props.card.slides[0].data)}</code>*/}
-                                        <Deck setCurrentPhoto={setCurrentPhoto} currentPhoto={currentPhoto} slideIndex={slideIndex} refetch={props.refetch} viewState={viewState} setViewState={setViewState} width={props.width} updateSlide={updateSlide} updateSlideMedia={updateSlideMedia} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card} />
+                                        <Deck client={client} setCurrentPhoto={setCurrentPhoto} currentPhoto={currentPhoto} slideIndex={slideIndex} refetch={props.refetch} viewState={viewState} setViewState={setViewState} width={props.width} updateSlide={updateSlide} updateSlideMedia={updateSlideMedia} updateMap={updateMap} updateAnnotation={updateAnnotation} trip={props.trip} card={props.card} />
                                         <CarouselExample setCurrentPhoto={setCurrentPhoto} slideIndex={slideIndex} setSlideIndex={setSlideIndex} viewState={viewState}  setViewState={setViewState} refetch={props.refetch} card={props.card}/>
                                     </div>
                                 }

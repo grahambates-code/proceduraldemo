@@ -1,8 +1,7 @@
 import React, { Fragment, useRef, useEffect, useState } from 'react';
-
 import { Query } from "react-apollo";
-
 import gql from "graphql-tag";
+import AssignPhotoToSlide from './../AssignPhotoToSlide'
 
 const GETMEDIA = gql`
                {
@@ -16,7 +15,7 @@ const GETMEDIA = gql`
               }
 `
 
-const App = () => {
+const App = ({slide, closeModal}) => {
 
     return (
         <div>
@@ -28,7 +27,10 @@ const App = () => {
 
                         return <Fragment>
                                     <ul>
-                                        {data.media.map(m => <li><img style={{width: '200px', height : 'auto'}} src={m.json.url}/></li>)}
+                                        {data.media.map(m => <li>
+                                            <img style={{height: '140px', width : 'auto'}} src={m.json.url}/>
+                                            <AssignPhotoToSlide media={m} slide={slide} closeModal={closeModal}/>
+                                        </li>)}
                                     </ul>
                                 </Fragment>
 

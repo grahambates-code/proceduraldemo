@@ -15,8 +15,6 @@ const INSERT_SLIDE = gql`
 
 export default function ({card, refetch, slideIndex, setSlideIndex}) {
 
-
-
     return (
 
         <div>

@@ -39,6 +39,7 @@
     "react-dropzone-uploader": "^2.11.0",
     "react-map-gl": "^5.2.7",
     "react-measure": "^2.5.2",
+    "react-modal": "^3.12.1",
     "react-reverse-portal": "^2.0.1",
     "react-rte": "^0.16.3",
     "react-scripts": "4.0.1",

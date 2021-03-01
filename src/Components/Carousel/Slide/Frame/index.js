@@ -60,7 +60,7 @@ export default ({card, slide, refetch, slideIndex, setSlideIndex, viewState}) =>
 
         <AddPhoto slide={slide} refetch={refetch} viewState={viewState}/>
 
-        <ListMedia refetch={refetch} viewState={viewState} />
+        <ListMedia slide={slide} refetch={refetch} viewState={viewState} />
 
     </div>
 

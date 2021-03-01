@@ -9,6 +9,8 @@ import _ from "lodash";
 import './index.less';
 import CustomPathLayer  from './layers/CustomPathLayer'
 import { EditableGeoJsonLayer, TransformMode, RotateMode } from "nebula.gl";
+import {bbox}  from '@turf/turf'
+import gql from "graphql-tag";
 
 const emptyFeatureCollection = {
     "type": "FeatureCollection",
@@ -16,6 +18,17 @@ const emptyFeatureCollection = {
 
     ]
 }
+
+const SAVE_SLIDE_DATA = gql`
+
+    mutation( $slide_id : Int,  $data : jsonb){
+                    update_card_slide(where: {id: {_eq: $slide_id}}, _set: { data: $data}) {
+                        returning {
+                                    id
+                                  }
+    }
+    }
+`;
 
 export default class extends Component {
 
@@ -37,6 +50,22 @@ export default class extends Component {
     render() {
 
         const slide = this.props.card.slides[this.props.slideIndex];
+
+       //console.log(slide.data.photo);
+        //console.log(slide.data.geojson);
+
+        let bounds = [];
+
+        if (slide.data.geojson) {
+            bounds = [
+                slide.data.geojson.features[0].geometry.coordinates[0][3],
+                slide.data.geojson.features[0].geometry.coordinates[0][2],
+                slide.data.geojson.features[0].geometry.coordinates[0][1],
+                slide.data.geojson.features[0].geometry.coordinates[0][0]
+            ];
+        }
+
+
 
         let layers = [
 
@@ -68,7 +97,7 @@ export default class extends Component {
 
 
             new GeoJsonLayer({
-                id: 'geojson-layer',
+                id: 'route-layer',
                 data : this.props.card.data || emptyFeatureCollection,
                 lineWidthScale: 1,
                 lineWidthMinPixels: 12,
@@ -99,86 +128,31 @@ export default class extends Component {
                 },
 
                 onEdit: (event) => {
-                    const { updatedData } = event;
+
+                    const { updatedData, editType } = event;
                     this.props.setCurrentPhoto(updatedData);
-                    const slide = that.props.card.slides[that.props.slideIndex];
-                    that.search2(() => this.props.updateSlide({variables : {slide_id : slide.id, camera : slide.camera, data : {...slide.data, geojson : updatedData} }}));
+
+                    if (editType === 'rotated' || editType === 'translated') {
+                        console.log(this.props.client);
+                        const slide = that.props.card.slides[that.props.slideIndex];
+
+                        this.props.client.mutate({mutation: SAVE_SLIDE_DATA, variables : {slide_id : slide.id, data : {...slide.data, geojson : updatedData} } });
+
+                       // alert('saving');
+                        //this.props.updateSlide({variables : {slide_id : slide.id, camera : slide.camera, data : {...slide.data, geojson : updatedData} }});
+                    }
+
                 }
             })) : null,
 
+            true && bounds.length ? new BitmapLayer({
+                            id: 'bitmap-layer',
+                            bounds,
+                            image: slide.data.photo
+            }) : []
 
             ];
 
-        if (true || this.props.card.annotations) {
-
-           // let x = this.props.card.annotations.features[0].geometry.coordinates[0];
-           // let y = this.props.card.annotations.features[1].geometry.coordinates[0];
-
-            //let xx =
-            //;
-
-           // console.log({type : 'FeatureCollection', features : [this.props.currentPhoto]});
-
-
-            // layers= layers.concat(slide.media.map(m =>
-            //
-            //     new EditableGeoJsonLayer({
-            //         id: 'mask-geojson-layer-linestring' + m.id,
-            //         xdata: {type : 'FeatureCollection', features : [this.props.currentPhoto]},
-            //         data: this.props.currentPhoto,
-            //         opacity : 1,
-            //         mode: TransformMode,
-            //         selectedFeatureIndexes: [0],
-            //
-            //         _subLayerProps: {
-            //             geojson: {
-            //                 getFillColor: (feature) => [255,255,255,0],
-            //                 getLineColor: (feature) => [255,255,255,0],
-            //             }
-            //         },
-            //
-            //         onEdit: (event) => {
-            //             const { editType, updatedData } = event;
-            //            // this.setState({data : updatedData});
-            //             this.props.setCurrentPhoto(updatedData);
-            //             //alert(this.props.updateAnnotation);
-            //             //console.log('onEdit');
-            //           //  that.search2(() => this.props.updateAnnotation({variables : {card_id : that.props.card.id, annotations : updatedData }}));
-            //         }
-            //     }),
-            //
-            //     // new BitmapLayer({
-            //     //     opacity : 1,
-            //     //     id: 'mask-arrow-layer',
-            //     //     bounds: [x[0], x[3], x[2], x[1]],
-            //     //     image : '/textures/postit.png',
-            //     //     pickable : true,
-            //     //     parameters: {
-            //     //         depthTest: false
-            //     //     },
-            //     //     onClick: ({bitmap, layer}) => {
-            //     //         console.log('aasd');
-            //     //         if (bitmap) {
-            //     //             const pixelColor = readPixelsToArray(layer.props.image, {
-            //     //                 sourceX: bitmap.pixel[0],
-            //     //                 sourceY: bitmap.pixel[1],
-            //     //                 sourceWidth: 1,
-            //     //                 sourceHeight: 1
-            //     //             })
-            //     //             console.log('Color at picked pixel:', pixelColor)
-            //     //         }
-            //     //     },
-            //     // }),
-            //
-            //     // new TapeLayer({
-            //     //     bounds: [y[0], y[3], y[2], y[1]],
-            //     // })
-            // ));
-
-        }
-
-
-      //  console.log((this.state.myBox));
         let that = this;
 
         class Controller extends MapController {
@@ -193,14 +167,12 @@ export default class extends Component {
 
                 if ((event.type === 'panend' || event.type === 'wheel' )) {
                     const slide = that.props.card.slides[that.props.slideIndex];
-                    that.search(() => that.props.updateSlide({variables : {slide_id : slide.id, data : slide.data, camera : this.controllerState._viewportProps}}));
+                   that.search(() => that.props.updateSlide({variables : {slide_id : slide.id,  camera : this.controllerState._viewportProps}}));
                 }
             }
         }
 
         let controller = Controller;
-
-        //return <div>test of expensive component</div>
 
         return (
             <div>
@@ -230,30 +202,8 @@ export default class extends Component {
                             layers={layers}/>
                     </div>
 
-                    {/*<DeckGL*/}
-
-                    {/*    viewState={this.props.viewState}*/}
-                    {/*    controller={{type: controller, touchRotate : false, dragRotate : false, scrollZoom: true, doubleClickZoom : false}}*/}
-                    {/*    _animate={false}*/}
-                    {/*    height="100%"*/}
-                    {/*    width="100%"*/}
-
-                    {/*    ref={deck => {*/}
-                    {/*        this.deckGL = deck;*/}
-                    {/*    }}*/}
-
-                    {/*    onViewStateChange={({viewId, viewState}) => {*/}
-                    {/*            this.props.setViewState(viewState);*/}
-                    {/*    }*/}
-
-                    {/*    }*/}
-
-                    {/*    layers={layers}/>*/}
-
                 </div>
 
-
-                {/*<Landscape updateLandscape={this.props.updateLandscape} card={this.props.card}/>*/}
             </div>
         );
     }

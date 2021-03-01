@@ -134,6 +134,8 @@ const App = () => {
 
                     <div>
 
+
+
                       <h1>{trip.name}</h1>
                       <h2> <AddPhoto refetch={refetch}/> </h2>
 
@@ -166,7 +168,7 @@ const App = () => {
 
                             return  <div className="App-section" key={i} >
                               { admin && <code>{JSON.stringify(card.id)}</code>}
-                              <Sketch trip={trip} portalNode2={portalNode2} width={width < 500 ? width : 500} admin={admin} stillLoading={stillLoading} incrementLoadedCount={() => setLoadedCount(loadedCount + 1)} key={i + '' + card.id} index={i} card={card} refetch={refetch}/>
+                              <Sketch client={client} trip={trip} portalNode2={portalNode2} width={width < 500 ? width : 500} admin={admin} stillLoading={stillLoading} incrementLoadedCount={() => setLoadedCount(loadedCount + 1)} key={i + '' + card.id} index={i} card={card} refetch={refetch}/>
                             </div>
                           }
 

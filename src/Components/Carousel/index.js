@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useSpringCarousel } from 'react-spring-carousel-js';
@@ -16,16 +16,17 @@ function usePrevious(value) {
 }
 
 
-function Carousel({ setCurrentPhoto, viewState, setViewState, setSlideIndex, slideIndex, card,refetch, className, style }) {
+function Carousel({ slidePhotoRotation, setSlidePhotoRotation, setCurrentPhoto, viewState, setViewState, setSlideIndex, slideIndex, card,refetch, className, style }) {
 
     const prev = usePrevious({ slides : card.slides.length});
+    const [locked, setLocked] = useState(false);
 
     const { carouselFragment, getCurrentActiveItem, useListenToCustomEvent, slideToNextItem } = useSpringCarousel({
         withLoop: false,
 
         items: card.slides.map((slide, index) => ({
             id: index,
-            renderItem: <Frame viewState={viewState} card={card} slide={slide} refetch={refetch} slideIndex={slideIndex} setSlideIndex={setSlideIndex}></Frame>
+            renderItem: <Frame setLocked={setLocked} slidePhotoRotation={slidePhotoRotation} setSlidePhotoRotation={setSlidePhotoRotation} viewState={viewState} card={card} slide={slide} refetch={refetch} slideIndex={slideIndex} setSlideIndex={setSlideIndex}></Frame>
         }))
     });
 
@@ -41,7 +42,7 @@ function Carousel({ setCurrentPhoto, viewState, setViewState, setSlideIndex, sli
         setCurrentPhoto(card.slides[name.nextItem].data.geojson); //setting photo geojson state
 
         card.slides[name.nextItem].camera && setViewState({
-            transitionDuration: 750,
+            transitionDuration: 350,
             transitionInterpolator: new LinearInterpolator(),
             ...card.slides[name.nextItem].camera});
     });

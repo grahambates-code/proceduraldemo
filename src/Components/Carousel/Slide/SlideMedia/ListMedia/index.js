@@ -3,10 +3,12 @@ import './index.less'
 import Query from './Query'
 import "wired-elements";
 import Modal from 'react-modal';
+import {WebMercatorViewport} from '@deck.gl/core';
+import * as turf from "@turf/turf";
 
-export default ({slide}) => {
+export default ({slide, viewState}) => {
 
-    const [modalIsOpen,setIsOpen] = React.useState(false);
+    const [modalIsOpen,setIsOpen] = useState(false);
 
     function openModal() {
         setIsOpen(true);
@@ -16,9 +18,13 @@ export default ({slide}) => {
         setIsOpen(false);
     }
 
-     return <Fragment>
+    const viewport  = new WebMercatorViewport(viewState);
+    const center    = viewport.unproject([viewport.width/2,viewport.width/2], {topLeft : true})
+
+    return <Fragment>
 
          <button onClick={openModal}>Open Modal</button>
+
          <Modal
              isOpen={modalIsOpen}
              onRequestClose={closeModal}
@@ -32,12 +38,11 @@ export default ({slide}) => {
                      transform             : 'translate(-50%, -50%)'
                  }
              }}
-             contentLabel="Example Modal"
          >
 
              <button onClick={closeModal}>close</button>
 
-             <Query slide={slide} closeModal={closeModal}/>
+             <Query slide={slide} closeModal={closeModal} pointB={ turf.point(center) }/>
 
          </Modal>
 

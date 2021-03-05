@@ -8,9 +8,23 @@ import {Component} from 'react';
 import _ from "lodash";
 import './index.less';
 import CustomPathLayer  from './layers/CustomPathLayer'
-import { EditableGeoJsonLayer, TransformMode, RotateMode } from "nebula.gl";
+import { EditableGeoJsonLayer, TransformMode, TranslateMode } from "nebula.gl";
+
+import MaskLayer from './layers/MaskLayer';
+import PolaroidAndPhoto from './layers/PolaroidAndPhoto';
+
 import {bbox}  from '@turf/turf'
 import gql from "graphql-tag";
+import {AmbientLight, PointLight, DirectionalLight, LightingEffect} from '@deck.gl/core';
+
+// create ambient light source
+const ambientLight = new AmbientLight({
+    color: [255, 255, 255],
+    intensity: 5.0
+});
+
+const lightingEffect = new LightingEffect({ambientLight});
+
 
 const emptyFeatureCollection = {
     "type": "FeatureCollection",
@@ -35,10 +49,7 @@ export default class extends Component {
     constructor(props) {
         super(props);
 
-        this.search  = _.debounce(e => e(), 300);
-        this.search2 = _.debounce(e => e(), 300);
-
-        // this.defaultViewstate = {map : props.card.camera || {longitude : 1, latitude : 1, zoom : 1}};
+        this.debounce  = _.debounce(e => e(), 300);
 
         this.state = {
             //data:       props.card && props.card.annotations ? props.card.annotations : myFeatureCollection,
@@ -50,22 +61,6 @@ export default class extends Component {
     render() {
 
         const slide = this.props.card.slides[this.props.slideIndex];
-
-       //console.log(slide.data.photo);
-        //console.log(slide.data.geojson);
-
-        let bounds = [];
-
-        if (slide.data.geojson) {
-            bounds = [
-                slide.data.geojson.features[0].geometry.coordinates[0][3],
-                slide.data.geojson.features[0].geometry.coordinates[0][2],
-                slide.data.geojson.features[0].geometry.coordinates[0][1],
-                slide.data.geojson.features[0].geometry.coordinates[0][0]
-            ];
-        }
-
-
 
         let layers = [
 
@@ -113,43 +108,40 @@ export default class extends Component {
 
             }),
 
-            this.props.currentPhoto ? (new EditableGeoJsonLayer({
-                id: 'mask-geojson-layer-linestring' ,
-                data: this.props.currentPhoto,
+          new EditableGeoJsonLayer({
+                id: 'mask-editor',
+                data:  this.props.slidePhotoRotation.position,
                 opacity : 1,
-                mode: TransformMode,
+                mode: TranslateMode,
                 selectedFeatureIndexes: [0],
 
                 _subLayerProps: {
                     geojson: {
-                        getFillColor: (feature) => [255,0,255,255],
+                        getFillColor: (feature) => [255,0,255,0],
                         getLineColor: (feature) => [255,255,255,0],
+                        pointRadiusMinPixels : 100
                     }
                 },
 
                 onEdit: (event) => {
 
                     const { updatedData, editType } = event;
-                    this.props.setCurrentPhoto(updatedData);
 
-                    if (editType === 'rotated' || editType === 'translated') {
-                        console.log(this.props.client);
-                        const slide = that.props.card.slides[that.props.slideIndex];
-
-                        this.props.client.mutate({mutation: SAVE_SLIDE_DATA, variables : {slide_id : slide.id, data : {...slide.data, geojson : updatedData} } });
-
-                       // alert('saving');
-                        //this.props.updateSlide({variables : {slide_id : slide.id, camera : slide.camera, data : {...slide.data, geojson : updatedData} }});
-                    }
+                    this.props.setSlidePhotoRotation({ ...this.props.slidePhotoRotation, position : updatedData});
+                    // if (editType === 'rotated' || editType === 'translated') {
+                    //     const slide = that.props.card.slides[that.props.slideIndex];
+                    //     this.props.client.mutate({mutation: SAVE_SLIDE_DATA, variables : {slide_id : slide.id, data : {...slide.data, geojson : updatedData} } });
+                    // }
 
                 }
-            })) : null,
+            }),
 
-            true && bounds.length ? new BitmapLayer({
-                            id: 'bitmap-layer',
-                            bounds,
-                            image: slide.data.photo
-            }) : []
+            slide.data.pointB ? new PolaroidAndPhoto({
+                id : "media",
+                data : [{
+                    position    : this.props.slidePhotoRotation.position.features[0].geometry.coordinates,
+                    scale       : this.props.slidePhotoRotation.scale,
+                    angle       : this.props.slidePhotoRotation.rotation}]}) : null
 
             ];
 
@@ -167,7 +159,7 @@ export default class extends Component {
 
                 if ((event.type === 'panend' || event.type === 'wheel' )) {
                     const slide = that.props.card.slides[that.props.slideIndex];
-                   that.search(() => that.props.updateSlide({variables : {slide_id : slide.id,  camera : this.controllerState._viewportProps}}));
+                   that.debounce(() => that.props.updateSlide({variables : {slide_id : slide.id,  camera : this.controllerState._viewportProps}}));
                 }
             }
         }
@@ -188,7 +180,7 @@ export default class extends Component {
                             _animate={false}
                             height="100%"
                             width="100%"
-
+                            effects={[lightingEffect]}
                             ref={deck => {
                                 this.deckGL = deck;
                             }}

@@ -134,9 +134,8 @@ const App = () => {
 
                     <div>
 
-
-
                       <h1>{trip.name}</h1>
+
                       <h2> <AddPhoto refetch={refetch}/> </h2>
 
                       <main className="App-main">
@@ -183,7 +182,7 @@ const App = () => {
                           return null;
                         })}
 
-                        <div className="App-section" style={{height : '100%'}}>
+                        <div className="xApp-section" style={{height : '100%'}}>
                           <CardAdder trip={trip} refetch={refetch}/>
                         </div>
 

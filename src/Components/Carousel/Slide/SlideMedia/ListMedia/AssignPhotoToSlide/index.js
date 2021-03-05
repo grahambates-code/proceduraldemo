@@ -14,7 +14,7 @@ mutation MyMutation($slide_id : Int, $data : jsonb) {
 
 `;
 
-export default ({slide, media, refetch,  closeModal}) => {
+export default ({slide, media, refetch,  closeModal, pointB}) => {
 
     return <div>
 
@@ -22,7 +22,7 @@ export default ({slide, media, refetch,  closeModal}) => {
             onError={() => alert('Could not add title card')}
             onCompleted={() => closeModal() && refetch && refetch() }
             mutation={SET}
-            variables={{slide_id : slide.id, data : {...slide.data, photo : media.json.url} }}>
+            variables={{slide_id : slide.id, data : {...slide.data, pointB : pointB, photo : media.json.url} }}>
 
             {(set, {loading, error}) => {
 

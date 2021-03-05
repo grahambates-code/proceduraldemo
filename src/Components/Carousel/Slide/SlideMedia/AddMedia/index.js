@@ -17,12 +17,12 @@ mutation UpdateSlide($slide_id : Int, $data : jsonb) {
 
 export default ({viewState,  slide, refetch}) => {
 
-    const test = (add) => {
+   // const test = (add, refetch) => {
 
         const viewport  = new WebMercatorViewport(viewState);
         //const center    = viewport.unproject([viewport.width/2,viewport.height/2])
         const tl    = viewport.unproject([0,0])
-        const br    = viewport.unproject([viewport.width,viewport.width]) // make a square
+        const br    = viewport.unproject([viewport.width/2,viewport.width/2], {topLeft : true}) // make a square
 
         var pointA = turf.point(tl);
         var pointB = turf.point(br);
@@ -31,20 +31,23 @@ export default ({viewState,  slide, refetch}) => {
         var pgn = turf.bboxPolygon(bbx);  //convert it to Polygon feature
 
         //code for making a square around center
-        add({variables  : {slide_id : slide.id, data : {...slide.data, geojson : {"type": "FeatureCollection", "features": [ pgn]}}}});
-    }
+     //   add({onCompleted : () =>{alert(refetch);refetch()}, variables  : {slide_id : slide.id, data : {...slide.data, geojson : {"type": "FeatureCollection", "features": [ pgn]}}}});
+    //}
 
     return <div>
 
         <Mutation
             onError={() => alert('Could not add slide photo')}
-            onCompleted={() => refetch && refetch() }
             mutation={ADD}
+            variables={{slide_id : slide.id, data : {...slide.data, geojson : {"type": "FeatureCollection", "features": [ pgn]}}}}
+            onCompleted={() => {
+                //alert(refetch);
+                refetch && refetch()}}
         >
 
             {(add, {loading, error}) => {
 
-                return <button onClick={ () => test(add) }>
+                return <button onClick={ () => add() }>
                   Add slide photo
                 </button>
             }}

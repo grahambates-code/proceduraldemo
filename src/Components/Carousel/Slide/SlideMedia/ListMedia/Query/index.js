@@ -15,7 +15,7 @@ const GETMEDIA = gql`
               }
 `
 
-const App = ({slide, closeModal}) => {
+const App = ({slide, closeModal, pointB}) => {
 
     return (
         <div>
@@ -29,7 +29,7 @@ const App = ({slide, closeModal}) => {
                                     <ul>
                                         {data.media.map(m => <li>
                                             <img style={{height: '140px', width : 'auto'}} src={m.json.url}/>
-                                            <AssignPhotoToSlide media={m} slide={slide} closeModal={closeModal}/>
+                                            <AssignPhotoToSlide media={m} slide={slide} closeModal={closeModal} pointB={pointB}/>
                                         </li>)}
                                     </ul>
                                 </Fragment>

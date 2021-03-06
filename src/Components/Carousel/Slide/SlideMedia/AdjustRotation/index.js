@@ -6,7 +6,7 @@ export default ({setLocked, slidePhotoRotation, setSlidePhotoRotation}) => {
     const content = (
         <div>
             <Slider min={-90} max={90} defaultValue={0} onChange={(e) => setSlidePhotoRotation({...slidePhotoRotation, rotation : e})} />
-            <Slider min={0} max={500} defaultValue={1} onChange={(e) => setSlidePhotoRotation({...slidePhotoRotation, scale : e})} />
+            <Slider min={0} max={500} defaultValue={10} onChange={(e) => setSlidePhotoRotation({...slidePhotoRotation, scale : e})} />
         </div>
     );
 

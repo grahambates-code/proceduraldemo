@@ -20,7 +20,7 @@ import {AmbientLight, PointLight, DirectionalLight, LightingEffect} from '@deck.
 // create ambient light source
 const ambientLight = new AmbientLight({
     color: [255, 255, 255],
-    intensity: 5.0
+    intensity: 2.5
 });
 
 const lightingEffect = new LightingEffect({ambientLight});

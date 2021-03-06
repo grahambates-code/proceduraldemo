@@ -62,12 +62,13 @@ export default class PolaroidAndPhotoLayer extends CompositeLayer {
             material : {
                 ambient: 0.4,
                 diffuse: 0.5,
-                shininess: 0.5,
+                shininess: 1.5,
                 specularColor: [255, 255, 255]
             },
-            scenegraph: '/textures/scene.glb',
+            scenegraph: '/textures/scene77.glb',
+
             getPosition: d => d.position,
-            //getTranslation : [0,0,-2000],
+            getTranslation : [0,0,0],
 
             getOrientation: d => [0, d.angle, 90 ],
             getScale: (d) =>[d.scale,d.scale,d.scale],
